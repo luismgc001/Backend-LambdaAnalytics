@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 
-
 class Migration(migrations.Migration):
 
     initial = True
@@ -11,6 +10,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        
         migrations.CreateModel(
             name='User',
             fields=[
@@ -31,4 +31,5 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
         ),
+        
     ]
