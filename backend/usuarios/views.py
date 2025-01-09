@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -10,6 +11,7 @@ from .serializers import RegisterSerializer, UserSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class RegisterView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
@@ -18,14 +20,18 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
+        
         try:
             user = User.objects.get(email=email)
             if not user.is_active:
+                print("error: Usuario inactivo")
                 return Response({"error": "Usuario inactivo"}, status=status.HTTP_400_BAD_REQUEST)
             if not user.check_password(password):
+                print("error: Contraseña incorrecta")
                 return Response({"error": "Contraseña incorrecta"}, status=status.HTTP_400_BAD_REQUEST)
 
             token = RefreshToken.for_user(user)
@@ -34,6 +40,7 @@ class LoginView(APIView):
                 "access": str(token.access_token),
             })
         except User.DoesNotExist:
+            print("error Usuario no encontrado")
             return Response({"error": "Usuario no encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserListView(APIView):
