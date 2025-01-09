@@ -22,5 +22,3 @@ urlpatterns = [
     path('api/', include('usuarios.urls')),  # Incluye las rutas de la app "users"
     path('api/', include('search.urls')),    # Incluye las rutas de la app "search"
 ]
-
-
