@@ -1,8 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
+from rest_framework.test import APIClient
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.http import JsonResponse
+from .etl import FiltroArticulos
 
 class ScrapingSearchView(APIView):
     def get(self, request):
@@ -47,8 +50,8 @@ class ScrapingSearchView(APIView):
                     print("Descuento")
 
                     # Descuento (si existe)
-                    discount_element = product.find("span", class_="andes-money-amount__discount")
-                    discount = discount_element.text.strip() if discount_element else "Sin descuento"
+                    elemento_descuento = product.find("span", class_="andes-money-amount__discount")
+                    descuento = elemento_descuento.text.strip() if elemento_descuento else "Sin descuento"
 
                     # Calificación (si existe)
                     elemento_calificacion = product.find("span", class_="andes-visually-hidden")
@@ -65,7 +68,7 @@ class ScrapingSearchView(APIView):
                         "enlace": enlace,
                         "imagen": imagen,
                         "vendedor": vendedor,
-                        "discount": discount,
+                        "descuento": descuento,
                         "calificacion": calificacion,
                     })
                 except Exception as e:
@@ -73,7 +76,7 @@ class ScrapingSearchView(APIView):
                     print(f"Error al procesar un producto: {e}")
                     continue
             
-            print("ITEMS: ", items)
+            
             return Response(items, status=status.HTTP_200_OK)
 
         except Exception as e:
@@ -81,3 +84,29 @@ class ScrapingSearchView(APIView):
                 {"error": f"Error al realizar la búsqueda: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+from .views import ScrapingSearchView
+
+class SearchAndETLView(APIView):
+    def get(self, request):
+        query = request.query_params.get("query")
+        if not query:
+            return Response({"error": "El parámetro 'query' es obligatorio."}, status=400)
+
+        # Llama directamente a ScrapingSearchView
+        scraping_view = ScrapingSearchView()
+        scraping_response = scraping_view.get(request)
+
+        if scraping_response.status_code != 200:
+            return Response(
+                {"error": "Error al obtener los datos desde ScrapingSearchView."},
+                status=scraping_response.status_code,
+            )
+
+        # Obtener los datos del scraping
+        products = scraping_response.data
+
+        # Pasar los datos a la función ETL
+        etl_result = FiltroArticulos(products)
+
+        return Response(etl_result, status=200)
