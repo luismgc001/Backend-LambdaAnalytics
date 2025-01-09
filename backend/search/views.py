@@ -4,6 +4,8 @@ from rest_framework.test import APIClient
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from .models import Articulo
+from .serializers import ArticuloSerializer
 from django.http import JsonResponse
 from .etl import FiltroArticulos
 
@@ -110,3 +112,25 @@ class SearchAndETLView(APIView):
         etl_result = FiltroArticulos(products)
 
         return Response(etl_result, status=200)
+    
+class ListaDeseosView(APIView):
+    def get(self, request):
+        articulos = Articulo.objects.all()
+        serializer = ArticuloSerializer(articulos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = ArticuloSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class ArticuloDetalleView(APIView):
+    def delete(self, request, pk):
+        try:
+            articulo = Articulo.objects.get(pk=pk)
+            articulo.delete()
+            return Response({"message": "Artículo eliminado correctamente"}, status=status.HTTP_200_OK)
+        except Articulo.DoesNotExist:
+            return Response({"error": "Artículo no encontrado"}, status=status.HTTP_404_NOT_FOUND)
