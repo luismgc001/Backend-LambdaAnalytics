@@ -33,7 +33,7 @@ class ScrapingSearchView(APIView):
 
             # Analizar el contenido HTML de la respuesta
             soup = BeautifulSoup(response.content, "html.parser")
-
+            
             # Extraer información relevante de los productos
             items = []
             for product in soup.find_all("div", class_="ui-search-result__wrapper"):
@@ -45,7 +45,11 @@ class ScrapingSearchView(APIView):
                     elemento_enlace = product.find("a", class_="poly-component__title")
                     enlace = elemento_enlace["href"] if elemento_enlace else "Sin enlace"
                     elemento_imagen = product.find("img", class_="poly-component__picture")
-                    imagen = elemento_imagen["src"] if elemento_imagen else "Sin imagen"
+                    imagen = ""
+                    if elemento_imagen["data-src"]:
+                        imagen = elemento_imagen["data-src"] if elemento_imagen else "Sin imagen"
+                    else:
+                        imagen = elemento_imagen["src"] if elemento_imagen else "Sin imagen"
 
                     # Descuento (si existe)
                     elemento_descuento = product.find("span", class_="andes-money-amount__discount")
@@ -76,7 +80,7 @@ class ScrapingSearchView(APIView):
             
             # Transformar los datos con FiltroArticulos
             etl_result = FiltroArticulos(items)
-            print("ETL RESULT",etl_result)
+            
 
             # Devolver ambos conjuntos de datos
             return Response(
@@ -119,19 +123,33 @@ class SearchAndETLView(APIView):
         etl_result = FiltroArticulos(products)
 
         return Response(etl_result, status=200)
-    
 class ListaDeseosView(APIView):
-    def get(self, request):
-        articulos = Articulo.objects.all()
-        serializer = ArticuloSerializer(articulos, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        def get(self, request):
+            try:
+                articulos = Articulo.objects.all()
+                serializer = ArticuloSerializer(articulos, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                print(f"Error al obtener los artículos de la lista de deseos: {e}")
+                return Response(
+                    {"error": "Ocurrió un error al obtener los artículos."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
 
-    def post(self, request):
-        serializer = ArticuloSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        def post(self, request):
+            try:
+                print("REQUEST DATA DESEOS", request.data)
+                serializer = ArticuloSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                print(f"Error al agregar un artículo a la lista de deseos: {e}")
+                return Response(
+                    {"error": "Ocurrió un error al agregar el artículo."},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
     
 class ArticuloDetalleView(APIView):
     def delete(self, request, pk):
