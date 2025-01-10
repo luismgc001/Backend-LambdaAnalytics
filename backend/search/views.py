@@ -15,7 +15,7 @@ class ScrapingSearchView(APIView):
         query = request.query_params.get("query")
         if not query:
             return Response(
-                {"error": "El parámetro 'q' es obligatorio."},
+                {"error": "El parámetro 'query' es obligatorio."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -74,14 +74,25 @@ class ScrapingSearchView(APIView):
                     print(f"Error al procesar un producto: {e}")
                     continue
             
-            
-            return Response(items, status=status.HTTP_200_OK)
+            # Transformar los datos con FiltroArticulos
+            etl_result = FiltroArticulos(items)
+            print("ETL RESULT",etl_result)
+
+            # Devolver ambos conjuntos de datos
+            return Response(
+                {
+                    "raw_data": items,  # Datos sin transformar
+                    "transformed_data": etl_result,  # Datos transformados
+                },
+                status=status.HTTP_200_OK,
+            )
 
         except Exception as e:
             return Response(
                 {"error": f"Error al realizar la búsqueda: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 from .views import ScrapingSearchView
 
