@@ -1,12 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
-from rest_framework.test import APIClient
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Articulo
 from .serializers import ArticuloSerializer
-from django.http import JsonResponse
 from .etl import FiltroArticulos
 
 class ScrapingSearchView(APIView):
