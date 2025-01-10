@@ -13,10 +13,10 @@ def create_users(apps, schema_editor):
         gender='M',
         role='admin',
         is_active=True,
-        password=make_password('admin123'),  # Encripta la contraseña
+        password=make_password('LambdaAnalytics'),  # Encripta la contraseña
     )
     print("Usuario administrador de ejemplo creado:", admin_user.email)
-    print("contraseña: ", "admin123")
+    print("contraseña: ", "LambdaAnalytics")
     
     # Crear usuario de ejemplo
     example_user = User.objects.create(
@@ -27,10 +27,10 @@ def create_users(apps, schema_editor):
         gender='F',
         role='user',  # Cambia 'user' por el rol adecuado en tu modelo
         is_active=True,
-        password=make_password('user123'),  # Encripta la contraseña
+        password=make_password('LambdaAnalytics'),  # Encripta la contraseña
     )
     print("Usuario de ejemplo creado:", example_user.email)
-    print("Contraseña: ", "user123")
+    print("Contraseña: ", "LambdaAnalytics")
 
 class Migration(migrations.Migration):
     dependencies = [
