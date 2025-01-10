@@ -138,18 +138,21 @@ class ListaDeseosView(APIView):
 
         def post(self, request):
             try:
-                print("REQUEST DATA DESEOS", request.data)
-                serializer = ArticuloSerializer(data=request.data)
+                data = request.data
+                serializer = ArticuloSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
                     return Response(serializer.data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    print("Errores del serializer:", serializer.errors)  # Imprime errores
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
                 print(f"Error al agregar un artículo a la lista de deseos: {e}")
                 return Response(
                     {"error": "Ocurrió un error al agregar el artículo."},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
+
     
 class ArticuloDetalleView(APIView):
     def delete(self, request, pk):
