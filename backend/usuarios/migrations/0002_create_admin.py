@@ -1,8 +1,10 @@
 from django.db import migrations
 from django.contrib.auth.hashers import make_password
 
-def create_admin_user(apps, schema_editor):
+def create_users(apps, schema_editor):
     User = apps.get_model('usuarios', 'User')
+    
+    # Crear usuario administrador
     admin_user = User.objects.create(
         email='admin@example.com',
         first_name='Admin',
@@ -13,7 +15,22 @@ def create_admin_user(apps, schema_editor):
         is_active=True,
         password=make_password('admin123'),  # Encripta la contraseña
     )
-    print("Usuario administrador creado:", admin_user.email)
+    print("Usuario administrador de ejemplo creado:", admin_user.email)
+    print("contraseña: ", "admin123")
+    
+    # Crear usuario de ejemplo
+    example_user = User.objects.create(
+        email='user@example.com',
+        first_name='Example',
+        last_name='User',
+        phone='987654321',
+        gender='F',
+        role='user',  # Cambia 'user' por el rol adecuado en tu modelo
+        is_active=True,
+        password=make_password('user123'),  # Encripta la contraseña
+    )
+    print("Usuario de ejemplo creado:", example_user.email)
+    print("Contraseña: ", "user123")
 
 class Migration(migrations.Migration):
     dependencies = [
@@ -21,5 +38,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_admin_user),
+        migrations.RunPython(create_users),
     ]
