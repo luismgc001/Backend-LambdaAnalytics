@@ -88,7 +88,7 @@ class UserDeactivateView(APIView):
         return Response({"message": "Usuario desactivado correctamente"}, status=status.HTTP_200_OK)
 
 class UserProfileView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user

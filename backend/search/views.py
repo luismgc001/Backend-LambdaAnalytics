@@ -38,18 +38,14 @@ class ScrapingSearchView(APIView):
             items = []
             for product in soup.find_all("div", class_="ui-search-result__wrapper"):
                 try:
-                    print("Dentro de try")
                     elemento_nombre = product.find("h2", class_="poly-component__title-wrapper")                    
                     nombre = elemento_nombre.text.strip() if elemento_nombre else "Sin nombre"
                     elemento_precio = product.find("span", class_="andes-money-amount andes-money-amount--cents-superscript")
                     precio = elemento_precio.text.strip() if elemento_precio else "Sin precio"
-                    print("DEBUG")
                     elemento_enlace = product.find("a", class_="poly-component__title")
                     enlace = elemento_enlace["href"] if elemento_enlace else "Sin enlace"
                     elemento_imagen = product.find("img", class_="poly-component__picture")
                     imagen = elemento_imagen["src"] if elemento_imagen else "Sin imagen"
-
-                    print("Descuento")
 
                     # Descuento (si existe)
                     elemento_descuento = product.find("span", class_="andes-money-amount__discount")
