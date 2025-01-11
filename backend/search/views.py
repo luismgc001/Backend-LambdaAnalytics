@@ -98,29 +98,6 @@ class ScrapingSearchView(APIView):
 
 from .views import ScrapingSearchView
 
-class SearchAndETLView(APIView):
-    def get(self, request):
-        query = request.query_params.get("query")
-        if not query:
-            return Response({"error": "El parámetro 'query' es obligatorio."}, status=400)
-
-        # Llama directamente a ScrapingSearchView
-        scraping_view = ScrapingSearchView()
-        scraping_response = scraping_view.get(request)
-
-        if scraping_response.status_code != 200:
-            return Response(
-                {"error": "Error al obtener los datos desde ScrapingSearchView."},
-                status=scraping_response.status_code,
-            )
-
-        # Obtener los datos del scraping
-        products = scraping_response.data
-
-        # Pasar los datos a la función ETL
-        etl_result = FiltroArticulos(products)
-
-        return Response(etl_result, status=200)
 class ListaDeseosView(APIView):
         def get(self, request):
             try:

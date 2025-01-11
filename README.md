@@ -12,9 +12,6 @@ Este proyecto es un backend desarrollado con Django y Django Rest Framework que 
 ## Requisitos
 
 - Python 3.9 o superior
-- Django 4.0 o superior
-- Django Rest Framework
-- Simple JWT
 
 ---
 
@@ -24,8 +21,8 @@ Sigue estos pasos para instalar y ejecutar el proyecto:
 
 1. Clona este repositorio:
    ```bash
-   git clone <URL del repositorio>
-   cd <nombre_del_proyecto>
+   git clone https://github.com/luismgc001/Backend-LambdaAnalytics
+   cd .\Backend-LambdaAnalytics\
    ```
 
 2. Crea un entorno virtual:
@@ -48,12 +45,8 @@ Sigue estos pasos para instalar y ejecutar el proyecto:
    pip install -r requirements.txt
    ```
 
-5. Configura las variables de entorno (opcional):
-   - Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
-     ```env
-     SECRET_KEY=tu_clave_secreta
-     DEBUG=True
-     ```
+5. cd .\backend\
+   
 
 6. Realiza las migraciones:
    ```bash
@@ -66,6 +59,16 @@ Sigue estos pasos para instalar y ejecutar el proyecto:
    ```
 
 ---
+
+Se crearan por defecto dos usuarios de ejemplo:
+
+admin@example.com
+password:LambdaAnalytics
+Rol: Administrador.
+
+User@example.com
+password:LambdaAnalytics
+Rol: user.
 
 ## Endpoints Principales
 
@@ -94,6 +97,11 @@ Sigue estos pasos para instalar y ejecutar el proyecto:
 - **Método:** `DELETE`
 - **Descripción:** Desactiva a un usuario en lugar de eliminarlo. Solo accesible para administradores.
 
+
+### Scraping y ETL
+- **Endpoint:** `/api/search/`
+- **Método:** `GET`
+- **Descripción:** Retorna los articulos extraidos de mercadolibre y las recomendaciones devueltas por la funcion FiltroArticulos.
 ---
 
 ## Tecnologías Utilizadas
@@ -101,21 +109,8 @@ Sigue estos pasos para instalar y ejecutar el proyecto:
 - **Django Rest Framework:** Para la creación de APIs RESTful.
 - **Simple JWT:** Para autenticación mediante tokens.
 
----
-
-## Estructura del Proyecto
-```
-<raiz_del_proyecto>/
-├── manage.py
-├── usuarios/
-│   ├── migrations/
-│   ├── models.py
-│   ├── views.py
-│   ├── serializers.py
-│   ├── urls.py
-├── requirements.txt
-├── .env (opcional)
-```
+Luego de ejecutar éste proyecto, debes ejecutar el front que se encuentra en el siguiente repositorio:
+https://github.com/luismgc001/Frontend-LambdaAnalytics
 
 ---
 
