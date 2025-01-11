@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ScrapingSearchView, SearchAndETLView, ListaDeseosView, ArticuloDetalleView
+from .views import ScrapingSearchView, ListaDeseosView, ArticuloDetalleView
 
 urlpatterns = [
     path("search/", ScrapingSearchView.as_view(), name="search"),
